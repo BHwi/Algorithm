@@ -9,54 +9,41 @@ public class Main {
 
 		n = sc.nextInt();
 		m = sc.nextInt();
-		
+		int min = Math.abs(n - 100);
+
 		button = new int[10];
-		
+
 		for(int i = 0; i < m; i++) {
 			int k = sc.nextInt();
 			button[k] = 1;
 		}
-		
-		if(n == 100) {
-			System.out.println(0);
-			System.exit(0);
-		}
-		
+
 		for(int i = 0; i < 1000000; i++) {
-			if(check(i)) {
-				if((n - i >= 0 ? n - i : i - n) < (n - near >= 0 ? n - near : near - n)) {
-					near = i;
-				}
-			}
+			int length = len(i);
+			
+			if(length > 0) min = Math.min(min, Math.abs(n - i) + length);
 		}
 		
-		if(near == n) {
-			System.out.println((n - near >= 0 ? n - near : near - n));
-		} else {
-			System.out.println((n - near >= 0 ? n - near : near - n) + (int) (Math.log10(near)) + 1);
-		}
+		System.out.println(min);
 	}
 	
-	// ���峭�� 1, �����Ѱ� 0
-	public static boolean check(int value) {
-		// �ʿ��Ѱ� 1, ���ʿ��Ѱ� 0
-		int[] need = new int[10];
+	public static int len(int i) {
+		// length가 0 이면 만들 수 없음을 의미.
+		// 따라서 length가 0 이상 이면 위와 같이 min을 계산.
+		int length = 0;
 		
-		if(value == 0) {
-			need[0] = 1;
-		} else {
-			while(value != 0) {
-				need[value % 10] = 1;
-				value /= 10;
-			}
+		if(i == 0) return button[i] == 1 ? 0 : 1;
+		
+		// i의 끝 자리수를 파악한 뒤, i를 10을 나누어서 0이 될때까지 자릿수가 있는지 확인
+		while(i > 0) {
+			// 자릿수가 고장났을 경우 0을 반환
+			if(button[i % 10] == 1) return 0;
+			
+			length++;
+			i /= 10;
 		}
 		
-		for(int i = 0; i < 10; i++) {
-			if(need[i] * button[i] == 1)
-				return false;
-		}
-		
-		return true;
+		return length;
 	}
 
 }
