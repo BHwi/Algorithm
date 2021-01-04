@@ -1,92 +1,82 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayDeque;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Deque;
-import java.util.Scanner;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.StringTokenizer;
 
 public class Main {
-	
-	public static int n;
-	public static int[] tmp_answer, answer;
-	public static int[][] arr;
+	public static char[][] arr;
+	public static boolean[][] visited;
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Scanner sc = new Scanner(System.in);
+	public static void main(String[] args) throws IOException{
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringBuilder sb = new StringBuilder();
+		LinkedList<Integer> ans = new LinkedList<>();
 		
-		int count = 0;
-		n = sc.nextInt();
-		sc.nextLine();
-		tmp_answer = new int[n];
-		arr = new int[n][n];
+		int N = Integer.parseInt(br.readLine());
+		arr = new char[N][N];
+		visited = new boolean[N][N];
 		
-		for (int i = 0; i < n; i++) {
-			String str = sc.nextLine();
-			for (int j = 0; j < n; j++) {
-				arr[i][j] = str.charAt(j) == '1' ? 1 : 0;
-			}
+		for(int i = 0; i < N; i++) {
+			String input = br.readLine();
+			arr[i] = input.toCharArray();
 		}
 		
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < n; j++) {
-				if(arr[i][j] == 1) {
-					tmp_answer[count++] = bfs(arr, i, j);
-				}
-			}
-		}
-		
-		for (int i = 0; i < n; i++) {
-			for(int j = 0; j < n; j++) {
-				System.out.print(arr[i][j] + " ");
-			}
-			System.out.println();
-		}
-		
-		System.out.println(count);
-		
-		answer = new int[count];
-		
-		for(int i = 0; i < count; i++) {
-			answer[i] = tmp_answer[i];
-		}
-		
-		Arrays.sort(answer);
-		
-		for(int i = 0; i < count; i++) {
-			System.out.println(answer[i]);
-		}
-	}
-	
-	public static int bfs(int[][] arr, int i, int j) {
-		Deque<int[]> queue = new ArrayDeque<int[]>();
-		int[] start = {i, j};
-		int[] dx = {-1, 1, 0, 0};
+		int[] dx = {1, -1, 0, 0};
 		int[] dy = {0, 0, -1, 1};
-		int count = 1;
 		
-		queue.add(start);
-		
-		while(!queue.isEmpty()) {
-			int[] tmp = queue.poll();
-			int x = tmp[0];
-			int y = tmp[1];
-			arr[x][y] = 0;
-			
-			for(int k = 0; k < 4; k++) {
-				int nx = x + dx[k];
-				int ny = y + dy[k];
-				
-				if(nx >= 0 && ny >= 0 && nx < n && ny < n) {
-					if(arr[nx][ny] == 1) {
-						arr[nx][ny] = 0;
-						int[] putQueue = {nx, ny};
-						queue.add(putQueue);
+		for(int i = 0; i < N; i++) {
+			for(int j = 0; j < N; j++) {
+				if(arr[i][j] == '1') {
+					int count = 0;
+					Deque<Point> q = new ArrayDeque<>();
+					
+					q.add(new Point(i, j));
+					visited[i][j] = true;
+					
+					while(!q.isEmpty()) {
+						Point p = q.poll();
+						arr[p.x][p.y] = '0';
 						count++;
+						
+						for(int k = 0; k < 4; k++) {
+							if(p.x + dx[k] >= 0 && p.x + dx[k] < N && p.y + dy[k] >= 0 && p.y + dy[k] < N) {
+								if(!visited[p.x + dx[k]][p.y + dy[k]] && arr[p.x + dx[k]][p.y + dy[k]] == '1') {
+									q.add(new Point(p.x + dx[k], p.y + dy[k]));
+									visited[p.x + dx[k]][p.y + dy[k]] = true;
+								}
+							}
+						}
 					}
+					ans.add(count);
 				}
 			}
 		}
 		
-		return count;
+		Collections.sort(ans);
+		
+		sb.append(ans.size() + "\n");
+		
+		Iterator<Integer> itr = ans.iterator();
+		
+		while(itr.hasNext())
+			sb.append(itr.next() + "\n");
+		
+		System.out.print(sb);
+		
+	}
+
+	public static class Point {
+		int x, y;
+
+		Point(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
 	}
 
 }
