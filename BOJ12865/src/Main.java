@@ -1,42 +1,37 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
+	public static int N, K, w, v;
+	public static int[] dp;
 	
-	public static int max = 0, n, k, min_w = 100001;
-	public static int[] w, v;
-
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringBuilder sb = new StringBuilder();
+		StringTokenizer st = new StringTokenizer(br.readLine());
 		
-		n = sc.nextInt();
-		k = sc.nextInt();
+		N = Integer.parseInt(st.nextToken());
+		K = Integer.parseInt(st.nextToken());
+		dp = new int[K + 1];
 		
-		w = new int[n];
-		v = new int[n];
-		boolean[] visited = new boolean[n];
-		
-		for(int i = 0; i < n; i++) {
-			w[i] = sc.nextInt();
-			v[i] = sc.nextInt();
-			min_w = Math.min(min_w, w[i]);
+		for(int i = 0; i < N; i++) {
+			st = new StringTokenizer(br.readLine());
+			w = Integer.parseInt(st.nextToken());
+			v = Integer.parseInt(st.nextToken());
+			
+			solve(w, v);
 		}
 		
-		dp(visited, 0, 0, 0);
-		
-		System.out.println(max);
+		System.out.println(dp[K]);
 	}
 	
-	public static void dp(boolean[] visited, int weight, int value, int num) {
-		if(weight + min_w > k)
-			return;
+	public static void solve(int w, int v) {
+		if(w > K) return;
 		
-		for(int i = 0; i < n; i++) {
-			if(!visited[i] && (weight + w[i]) <= k) {
-				visited[i] = true;
-				max = Math.max(max, value + v[i]);
-				dp(visited, weight + w[i], value + v[i], num + 1);
-				visited[i] = false;
-			}
+		for(int i = K; i - w >= 0; i--) {
+			dp[i] = Math.max(dp[i - w] + v, dp[i]);
 		}
 	}
 
