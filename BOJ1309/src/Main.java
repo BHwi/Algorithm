@@ -1,29 +1,57 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 
 public class Main {
-
+	public static int N;
+	public static long answer = 0;
+	public static int[] dx = {0, -1, -1, 0, 1, 1};
+	public static int[] dy = {1, 0, 0, -1, 0, 0};
+	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		N = Integer.parseInt(br.readLine());
 		
-		int N = Integer.parseInt(br.readLine());
+		solve(-1, 25, 25, 0, new boolean[50][50], "");
 		
-		int none = 1; // 맨 아래 사자가 없는 경우
-		int left = 1; // 맨 아래 사자가 왼쪽에 있는 경우
-		int right = 1; // 맨 아래 사자가 오른쪽에 있는 경우
-		
-		for(int i = 0; i < N - 1; i++) {
-			int tmp_n = none;
-			int tmp_l = left;
-			int tmp_r = right;
-			
-			none = (tmp_n + tmp_l + tmp_r) % 9901;
-			left = (tmp_n + tmp_r) % 9901;
-			right = (tmp_n + tmp_l) % 9901;
+		System.out.println(answer);
+	}
+	
+	public static void solve(int count, int x, int y, int state, boolean[][] visited, String str) {
+		if(count == -1) {
+			visited[x][y] = true;
+			visited[x + dx[0]][y + dy[0]] = true;
+			solve(0, x + dx[0], y + dy[0], 0, visited, "");
 		}
-		
-		System.out.println((none + left + right) % 9901);
+		else if(count == N) {
+			return;
+		}
+		else {
+			// i - 1 % 6
+			int nextState = (6 + state - 1) % 6;
+			
+			if(visited[x + dx[nextState]][y + dy[nextState]]) {
+				if(count == N - 1) answer++;
+			}
+			else {
+				visited[x + dx[nextState]][y + dy[nextState]] = true;
+				solve(count + 1, x + dx[nextState], y + dy[nextState], nextState, visited, str + nextState);
+				visited[x + dx[nextState]][y + dy[nextState]] = false;
+			}
+			
+			// i + 1 % 6
+			nextState = (state + 1) % 6;
+			
+			if(visited[x + dx[nextState]][y + dy[nextState]]) {
+				if(count == N - 1) answer++;
+			}
+			else {
+				visited[x + dx[nextState]][y + dy[nextState]] = true;
+				solve(count + 1, x + dx[nextState], y + dy[nextState], nextState, visited, str + nextState);
+				visited[x + dx[nextState]][y + dy[nextState]] = false;
+			}
+		}
 	}
 
 }

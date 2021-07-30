@@ -1,59 +1,55 @@
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class Main {
-	
-	public static int[][] arr;
-	public static int m, n;
+	public static int[] dx = {-1, 1, 0, 0};
+	public static int[] dy = {0, 0, -1, 1};
+	public static int N, M;
+	public static int[][] dp, arr;
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Scanner sc = new Scanner(System.in);
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
 		
-		m = sc.nextInt();
-		n = sc.nextInt();
-		arr = new int[m][n];
-		int[][] tmp_arr = new int[m][n];
+		N = Integer.parseInt(st.nextToken());
+		M = Integer.parseInt(st.nextToken());
 		
-		for (int i = 0; i < m; i++) {
-			for (int j = 0; j < n; j++) {
-				arr[i][j] = sc.nextInt();
-			}
+		arr = new int[N][M];
+		dp = new int[N][M];
+		
+		for(int i = 0; i < N; i++) Arrays.fill(dp[i], -1);
+		
+		for(int i = 0; i < N; i++) {
+			st = new StringTokenizer(br.readLine());
+			for(int j = 0; j < M; j++) arr[i][j] = Integer.parseInt(st.nextToken());
 		}
 		
-		tmp_arr[0][0] = 1;
-		recursion(tmp_arr);
-		
-		System.out.println(tmp_arr[m-1][n-1]);
-		
-		sc.close();
+		System.out.println(search(0, 0));
 	}
 	
-	public static void recursion(int[][] tmp_arr) {
-		Deque<Integer> x_queue = new ArrayDeque<Integer>();
-		Deque<Integer> y_queue = new ArrayDeque<Integer>();
-		
-		x_queue.add(0);
-		y_queue.add(0);
-		
-		int[] dx = {-1, 1, 0, 0}; int[] dy = {0, 0, -1, 1};
-		
-		while(!x_queue.isEmpty()) {
-			int x = x_queue.poll();
-			int y = y_queue.poll();
-			
+	public static int search(int x, int y) {
+		if(x == N - 1 && y == M - 1) {
+			return 1;
+		}
+		if(dp[x][y] != -1) {
+			return dp[x][y];
+		}
+		else {
+			dp[x][y] = 0;
 			for(int i = 0; i < 4; i++) {
-				int nx = x + dx[i], ny = y + dy[i];
+				int nx = x + dx[i];
+				int ny = y + dy[i];
 				
-				if(nx < m && ny < n && nx >= 0 && ny >= 0 && arr[x][y] > arr[nx][ny]) {
-					x_queue.add(nx);
-					y_queue.add(ny);
-					tmp_arr[nx][ny]++;
+				if(nx >= 0 && nx < N && ny >= 0 && ny < M) {
+					if(arr[nx][ny] < arr[x][y])
+						dp[x][y] += search(nx, ny);
 				}
 			}
 		}
 		
+		return dp[x][y];
 	}
-
 }
