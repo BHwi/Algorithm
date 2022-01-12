@@ -72,6 +72,7 @@ public class Main {
 			int curNode = cur.end;
 			int curWeight = cur.weight;
 			
+			if(visited[curNode]) continue;
 			visited[curNode] = true;
 			
 			for(int i = 0; i < list[curNode].size(); i++) {
