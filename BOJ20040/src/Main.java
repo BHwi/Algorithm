@@ -6,6 +6,9 @@ import java.util.StringTokenizer;
 public class Main {
 	public static int stoi(String s) {return Integer.parseInt(s);}
 	public static int[] parent;
+	
+	// 경로압축 : O(log(n)), union by rank : O(log(n))
+	// 둘 다 쓰면 : O(1)
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -38,7 +41,8 @@ public class Main {
 			return n;
 		}
 		else {
-			return find(parent[n]);
+			// 경로 압
+			return parent[n] = find(parent[n]);
 		}
 	}
 	
